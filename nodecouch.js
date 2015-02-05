@@ -1,3 +1,5 @@
+var http = require('http');
+
 var CouchDB = function(host, db, port) {
     if (typeof(port) === 'undefined') { port = 5984; }
     this.host = host;
@@ -58,6 +60,12 @@ CouchDB.prototype.loadDocument = function(key, callback) {
     var request = this.createRequest(key, 'GET', callback);
     request.end();
 };
+
+
+CouchDB.prototype.allDocuments = function(callback) {
+    var request = this.createRequest('_all_docs', 'GET', callback);
+    request.end();
+}
 
 /*
 CouchDB.prototype.deleteLatest = function(key, callback) {
