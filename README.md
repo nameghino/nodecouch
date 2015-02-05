@@ -23,8 +23,9 @@ db.storeDocument('apollo13', movie, function(err, result) {
 db.loadDocument('apollo13', function(err, obj) {
 	if (err) { console.dir(err); return; }
 	console.log('got object:');
-	console.dir(obj);
-}
+	consomle.dir(obj);
+});
 ```
 
-BTW, the above snippets were written at 2 AM and not checked, sry :(
+~~~BTW, the above snippets were written at 2 AM and not checked, sry :(~~~
+Checked them and were ok (except for a missing parens...)!
