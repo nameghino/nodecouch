@@ -27,5 +27,6 @@ db.loadDocument('apollo13', function(err, obj) {
 });
 ```
 
-~~~BTW, the above snippets were written at 2 AM and not checked, sry :(~~~
+~~BTW, the above snippets were written at 2 AM and not checked, sry :(~~
+
 Checked them and were ok (except for a missing parens...)!
