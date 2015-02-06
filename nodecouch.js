@@ -7,15 +7,7 @@ var CouchDB = function(host, db, port) {
     this.port = port;
 }
 
-CouchDB.prototype.createRequest = function(key, method, callback) {
-    var options = {
-        host: this.host,
-        port: Number(this.port),
-        method: method,
-        path: '/' + this.db + '/' + key,
-        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', }
-    }
-
+CouchDB.prototype.createRequest = function(options, callback) {
     var req = http.request(options, function(res) {
         res.setEncoding('utf8');
         var d = ""
@@ -41,6 +33,35 @@ CouchDB.prototype.createRequest = function(key, method, callback) {
     return req;
 };
 
+CouchDB.prototype.createDocumentRequest = function(key, method, callback) {
+    var options = {
+        host: this.host,
+        port: Number(this.port),
+        method: method,
+        path: '/' + this.db + '/' + key,
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', }
+    }
+
+    return this.createRequest(options, callback);
+};
+
+CouchDB.prototype.createDatabase = function(callback) {
+    var options = {
+        host: this.host,
+        port: Number(this.port),
+        method: 'PUT',
+        path: '/' + this.db,
+        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', }
+    }
+
+    var req = this.createRequest(options, function(err, res) {
+        if (res.ok) { callback(true); return; }
+        callback(err);
+    });
+
+    req.end();
+}
+
 CouchDB.prototype.storeDocument = function(key, obj, callback) {
     this.updateDocument(key, obj, null, callback);
 }
@@ -51,19 +72,19 @@ CouchDB.prototype.updateDocument = function(key, obj, baseRevision, callback) {
     }
 
     var jsonString = JSON.stringify(obj);
-    var req = this.createRequest(key, 'PUT', callback);
+    var req = this.createDocumentRequest(key, 'PUT', callback);
     req.write(jsonString);
     req.end();
 };
 
 CouchDB.prototype.loadDocument = function(key, callback) {
-    var request = this.createRequest(key, 'GET', callback);
+    var request = this.createDocumentRequest(key, 'GET', callback);
     request.end();
 };
 
 
 CouchDB.prototype.allDocuments = function(callback) {
-    var request = this.createRequest('_all_docs', 'GET', callback);
+    var request = this.createDocumentRequest('_all_docs', 'GET', callback);
     request.end();
 }
 
@@ -81,7 +102,7 @@ CouchDB.prototype.deleteObject = function(o, callback) {
 }
 
 CouchDB.prototype.deleteDocument = function(key, revision, callback) {
-    var request = this.createRequest(key, 'DELETE', callback);
+    var request = this.createDocumentRequest(key, 'DELETE', callback);
     request.setHeader('If-Match', revision);
     request.end();
 };
